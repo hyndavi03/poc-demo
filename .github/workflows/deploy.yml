@@ -30,7 +30,7 @@ jobs:
    steps:
    - name: Debug - List Directory Contents
      run: ls -R
-     
+
    - name: Deploy to Lambda and Upload to S3
      run: |
        # Install AWS CLI
@@ -42,7 +42,7 @@ jobs:
        aws configure set region ap-south-1
 
        # Navigate to the correct directory
-       cd $GITHUB_WORKSPACE
+       cd $GITHUB_WORKSPACE/target
 
        # Upload to S3
        aws s3 cp target/my-java-app-1.0-SNAPSHOT.jar s3://demo-pocaws/
