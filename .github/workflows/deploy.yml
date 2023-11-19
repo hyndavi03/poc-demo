@@ -28,18 +28,18 @@ jobs:
     needs: build
 
     steps:
-    - name: Deploy to Lambda
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ap-south-1
+    - name: Deploy to Lambda and Upload to S3
+      run: |
+        # Install AWS CLI
+        sudo apt-get install -y awscli
 
-    - name: Upload to S3
-      uses: aws-actions/aws-cli@v2
-      with:
-        args: s3 cp target/my-java-app-1.0-SNAPSHOT.jar s3://demo-pocaws/
+        # Configure AWS CLI
+        aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws configure set region ap-south-1
 
+        # Upload to S3
+        aws s3 cp target/my-java-app-1.0-SNAPSHOT.jar s3://demo-pocaws/
 
-    - name: Update Lambda function
-      run: aws lambda update-function-code --function-name poc-function-name --s3-bucket demo-pocaws --s3-key my-java-app-1.0-SNAPSHOT.jar
+        # Update Lambda function
+        aws lambda update-function-code --function-name poc-function-name --s3-bucket demo-pocaws --s3-key my-java-app-1.0-SNAPSHOT.jar
