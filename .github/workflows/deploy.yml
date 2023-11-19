@@ -13,8 +13,12 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Set up Maven
-      uses: apache/maven@v3
+    - name: Set up JDK 17 and Maven
+      uses: actions/setup-java@v2
+      with:
+        distribution: 'adopt'
+        java-version: '17'
+        maven-version: '3.8.4'
 
     - name: Build Java application
       run: mvn package -DskipTests=true
