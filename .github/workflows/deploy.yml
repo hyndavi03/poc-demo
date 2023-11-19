@@ -21,7 +21,7 @@ jobs:
         maven-version: '3.8.4'
 
     - name: Build Java application
-      run: mvn package -DskipTests=true
+      run: javac -d . src/*.java && jar -cvfe app.jar MainClass .
 
   deploy:
     runs-on: ubuntu-latest
@@ -31,7 +31,7 @@ jobs:
     - name: Upload to S3
       uses: aws-actions/aws-cli@v2
       with:
-        args: s3 cp target/demo-*.jar s3://demo-pocaws/
+        args: s3 cp app.jar s3://demo-pocaws/
 
     - name: Deploy to Lambda
       uses: aws-actions/configure-aws-credentials@v1
@@ -41,4 +41,4 @@ jobs:
         aws-region: ap-south-1
 
     - name: Update Lambda function
-      run: aws lambda update-function-code --function-name poc-func --s3-bucket demo-pocaws --s3-key demo-*.jar
+      run: aws lambda update-function-code --function-name poc-func --s3-bucket demo-pocaws --s3-key app.jar
