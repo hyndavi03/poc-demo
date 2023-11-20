@@ -19,29 +19,19 @@ jobs:
         distribution: 'adopt'
         java-version: '8'  # Use the desired version from the available versions
 
+    - name: Debug Environment
+      run: |
+        echo "JAVA_HOME: $JAVA_HOME"
+        echo "M2_HOME: $M2_HOME"
+        env
+
+    - name: Disable Maven Cache
+      run: |
+        export MAVEN_OPTS="-Dmaven.repo.local=${GITHUB_WORKSPACE}/.m2/repository"
+
     - name: Build with Maven
       run: mvn clean package
 
-    - name: Create ZIP file
-      run: zip -j target/poc-1.0-SNAPSHOT.zip target/poc-1.0-SNAPSHOT.jar
-
-    - name: Upload ZIP to S3
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ap-south-1
-    - run: aws s3 cp target/poc-1.0-SNAPSHOT.zip s3://demo-pocaws/poc-1.0-SNAPSHOT.zip
-
-  deploy-lambda:
-    runs-on: ubuntu-latest
-    needs: build
-
-    steps:
-    - name: Upload ZIP to Lambda Function
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ap-south-1
-    - run: aws lambda update-function-code --function-name pocfunc --s3-bucket demo-pocaws --s3-key poc-1.0-SNAPSHOT.zip
+    - name: Debug Target Directory
+      run: |
+        ls -R target
