@@ -22,9 +22,15 @@ jobs:
     - name: Build with Maven
       run: mvn clean package
 
+    - name: List Target Contents
+      run: ls -R target
+  
     - name: Create ZIP file
       run: zip -j $GITHUB_WORKSPACE/target/poc-1.0-SNAPSHOT.zip $GITHUB_WORKSPACE/target/poc-1.0-SNAPSHOT.jar
 
+    - name: List ZIP Contents
+      run: unzip -l target/poc-1.0-SNAPSHOT.zip
+      
     - name: Upload ZIP to S3
       uses: aws-actions/configure-aws-credentials@v1
       with:
